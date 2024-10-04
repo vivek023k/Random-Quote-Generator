@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Quote Generator</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: "Poppins", sans-serif;
+        color: white;
+        overflow: hidden;
+        background: black;
+        flex-direction: column;
+      }
+
+      .background-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        z-index: -1;
+      }
+
+      .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: blur(20px);
+        opacity: 0;
+        transition: opacity 2s ease-in-out, transform 2s ease-in-out;
+      }
+
+      .background-image.active {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+
+      .welcome-screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.9);
+        flex-direction: column;
+        opacity: 1;
+        transition: opacity 2s ease-in-out;
+        color: #39ff14;
+        text-align: center;
+        font-size: 5vw; /* Adjusted for mobile responsiveness */
+        font-family: "Poppins", sans-serif;
+      }
+
+      .welcome-screen.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .neon {
+        text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14, 0 0 30px #39ff14,
+          0 0 40px #39ff14, 0 0 50px #39ff14, 0 0 60px #39ff14;
+      }
+
+      .content {
+        z-index: 1;
+        text-align: center;
+        font-size: 6vw; /* Adjusted for mobile responsiveness */
+        display: none;
+        padding: 20px; /* Spacing for mobile layout */
+      }
+
+      h1 {
+        font-size: 7vw; /* Adjusted for mobile responsiveness */
+        margin-bottom: 20px;
+      }
+
+      .quote {
+        font-size: 5vw; /* Adjusted for mobile responsiveness */
+        margin-bottom: 30px;
+        animation: none;
+      }
+
+      button {
+        padding: 15px 30px; /* Adjusted button size */
+        font-size: 4vw; /* Adjusted for mobile */
+        cursor: pointer;
+        background-color: #5ac0ff;
+        border: none;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #409cd4;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes zoomIn {
+        from {
+          transform: scale(0.5);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes rotateIn {
+        from {
+          transform: rotate(180deg);
+          opacity: 0;
+        }
+        to {
+          transform: rotate(0deg);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background-container">
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZZdb6qDfGRWSISbJpWPpbrOeZfM83gCb6qg&s"
+        class="background-image active"
+        alt="Image 1"
+      />
+      <img
+        src="https://img.freepik.com/free-photo/beautiful-natural-view-landscape_23-2150787996.jpg"
+        class="background-image"
+        alt="Image 2"
+      />
+      <img
+        src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0"
+        class="background-image"
+        alt="Image 3"
+      />
+    </div>
+
+    <div class="welcome-screen neon">
+      <p>Welcome to Random Quote Generator App</p>
+      <p>Developer: Vivek</p>
+    </div>
+
+    <div class="content">
+      <h1>Random Quote Generator</h1>
+      <p class="quote">Click the button to generate a quote!</p>
+      <button onclick="generateQuote()">Generate Quote</button>
+    </div>
+
+    <script>
+      const images = document.querySelectorAll(".background-image");
+      let currentIndex = 0;
+      const quotes = [
+        "The only limit to our realization of tomorrow is our doubts of today.",
+        "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+        "What you get by achieving your goals is not as important as what you become by achieving your goals.",
+        "The future belongs to those who believe in the beauty of their dreams.",
+        "Success ka raasta kabhi aasaan nahi hota, lekin manzil hamesha khoobsurat hoti hai.",
+        "Agar aap sapna dekh sakte ho, toh aap use pura kar bhi sakte ho.",
+        "Fail hone ka matlab yeh nahi ki aap haar gaye, balki yeh hai ki aapne koshish ki.",
+        "Kal ke sapne aaj ke mehnat se pure hote hain.",
+        "Samay ka sadupyog karna hi safalta ki chaabi hai.",
+        "Zindagi wahi jeet-ta hai jo haar kar bhi uthane ka hausla rakhta hai.",
+        "Safalta unhe milti hai jo haar nahi maante.",
+        "jo log koshish karte hain, woh haar se kabhi nahi darte.",
+        "'Ctrl + Z' zindagi mein bhi kaam karta toh kitna accha hota na?",
+        "Pehla computer virus 1986 mein 'Brain' naam se bana tha.",
+      ];
+
+      function changeBackground() {
+        images[currentIndex].classList.remove("active");
+        currentIndex = (currentIndex + 1) % images.length;
+        images[currentIndex].classList.add("active");
+      }
+
+      function generateQuote() {
+        const quoteElement = document.querySelector(".quote");
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        quoteElement.textContent = quotes[randomIndex];
+
+        const animations = ["fadeIn", "zoomIn", "rotateIn"];
+        const randomAnimation =
+          animations[Math.floor(Math.random() * animations.length)];
+        quoteElement.style.animation = `${randomAnimation} 1s ease`;
+      }
+
+      function startApp() {
+        const welcomeScreen = document.querySelector(".welcome-screen");
+        const content = document.querySelector(".content");
+
+        // Fading out the welcome screen
+        welcomeScreen.classList.add("fade-out");
+
+        // Display the content after the welcome screen fades out
+        setTimeout(() => {
+          content.style.display = "block";
+        }, 2000);
+      }
+
+      // Change background every 5 seconds
+      setInterval(changeBackground, 5000);
+
+      // Start app after 2 seconds
+      setTimeout(startApp, 2000);
+    </script>
+  </body>
+</html>
